@@ -7,10 +7,7 @@ package luoe.mq;
  * @Describe
  **/
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
@@ -21,7 +18,8 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class MessagingRabbitmqApplication {
 
-    static final String topicExchangeName = "test.exchange";
+    static final String directExchangeName = "test.exchange";
+    static final String topicExchangeName = "test.exchange3";
 
     static final String queueName = "test.queue";
 
@@ -32,11 +30,21 @@ public class MessagingRabbitmqApplication {
 
     @Bean
     DirectExchange exchange() {
-        return new DirectExchange(topicExchangeName);
+        return new DirectExchange(directExchangeName);
+    }
+
+    @Bean
+    TopicExchange exchangeT() {
+        return new TopicExchange(topicExchangeName);
     }
 
     @Bean
     Binding binding(Queue queue, DirectExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with("test.queue");
+    }
+
+    @Bean
+    Binding bindingT(Queue queue, TopicExchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with("test.queue");
     }
 
